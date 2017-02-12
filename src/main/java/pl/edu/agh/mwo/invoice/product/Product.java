@@ -10,6 +10,12 @@ public abstract class Product {
 	private final BigDecimal taxPercent;
 
 	protected Product(String name, BigDecimal price, BigDecimal tax) {
+		if (this.name==null || this.name.equals("")|| price==null || price.compareTo(BigDecimal.ZERO)<0) {
+			System.out.println("Error w nazwie lub cenie");
+			throw new IllegalArgumentException() ;	
+		}
+	
+		
 		this.name = name;
 		this.price = price;
 		this.taxPercent = tax;
