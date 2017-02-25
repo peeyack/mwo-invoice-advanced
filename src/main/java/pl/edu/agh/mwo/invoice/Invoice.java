@@ -7,6 +7,29 @@ import java.util.Map;
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
+	private int numerFaktury;
+	private static int nextNumber=0;
+	
+	public Invoice(){
+		this.numerFaktury = nextNumber;
+		nextNumber+=1;
+	}
+	public static void resetNextNumber(){
+		nextNumber=1;
+	}
+
+	public int getNumber() {
+		
+		return numerFaktury ;
+	}
+	
+	public void zmienNrFaktury(){
+		numerFaktury+=1;
+	}
+	
+	
+	
+	
 	private Map<Product, Integer> products = new HashMap<Product, Integer>();
 
 	public void addProduct(Product product) {
@@ -28,7 +51,8 @@ public class Invoice {
 		}
 		return totalNet;
 	}
-
+	
+	
 	public BigDecimal getTaxTotal() {
 		return getGrossTotal().subtract(getNetTotal());
 	}
@@ -41,4 +65,13 @@ public class Invoice {
 		}
 		return totalGross;
 	}
+	public String printedVersion() {  // Nasz metoda 1 - drukowanie
+		String print = String.valueOf(numerFaktury);
+		for (Product product : products.keySet()){
+			print = "\n "+ print +  product.getName()+product.getPrice()+product.getClass();
+		}
+		
+		return print;
+	}
+
 }

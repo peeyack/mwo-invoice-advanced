@@ -4,9 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
+import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import pl.edu.agh.mwo.invoice.Invoice;
 import pl.edu.agh.mwo.invoice.product.DairyProduct;
 import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
@@ -17,6 +19,45 @@ public class InvoiceTest {
 	private static final String PRODUCT_2 = "Product 2";
 	private static final String PRODUCT_3 = "Product 3";
 
+	@Before
+	public void resetNextNumber(){
+		Invoice.resetNextNumber();
+	}
+	
+	@Test// czy wartosc zmiennej printed bedzie zawarta w inwoice number
+	public void testPrintedInvoiceHasNumber(){
+		Invoice invoice= createEmptyInvoice();
+		String printed = invoice.printedVersion();
+		String invoiceNumber = String.valueOf(invoice.getNumber());
+		Assert.assertThat(printed, Matchers.containsString(invoiceNumber));
+	}
+	@Test// drugi test - name 
+	public void testProductNameIsonPrintedVersion(){
+		Invoice invoice= createEmptyInvoice();
+		Product product = new DairyProduct("mleko",new BigDecimal("3.50"));
+		invoice.addProduct(product);
+		String printed = invoice.printedVersion();
+		Assert.assertThat(printed, Matchers.containsString("mleko"));
+	}
+	
+	@Test// trzeci test - typ
+	public void testProductTypeIsOnPrintedVersion(){
+		Invoice invoice= createEmptyInvoice();
+		Product product = new DairyProduct("mleko",new BigDecimal("3.50"));
+		invoice.addProduct(product);
+		String printed = invoice.printedVersion();
+		Assert.assertThat(printed, Matchers.containsString("DairyProduct"));
+	}
+	@Test// czwarty test - ile sztuk
+	public void testProductAmountIsOnPrintedVersion(){
+		Invoice invoice= createEmptyInvoice();
+		Product product = new DairyProduct("jogurt",new BigDecimal("3.50"));
+		invoice.addProduct(product,5);
+		String printed = invoice.printedVersion();
+		Assert.assertThat(printed, Matchers.containsString("6"));
+	}	
+	
+	
 	@Test
 	public void testEmptyInvoiceHasEmptySubtotal() {
 		Invoice invoice = createEmptyInvoice();
@@ -98,7 +139,25 @@ public class InvoiceTest {
 		Invoice invoice = createEmptyInvoice();
 		invoice.addProduct(createTaxFreeProduct(), -1);
 	}
-
+	
+	@Test //dopisane na najnowszych
+	public void testInvoiceHasNumberGreaterThanZero() {
+		Invoice invoice = createEmptyInvoice();
+		Assert.assertTrue(invoice.getNumber()>0);
+	}
+	
+	@Test //dopisane na najnowszych
+	public void testInvoiceHasNumberGreaterThanZeroImproved() {
+		Invoice invoice = createEmptyInvoice();
+		Assert.assertThat(invoice.getNumber(),Matchers.greaterThan(0));
+	}
+	@Test
+	public void testInvoicesHaveDifferentNumbers() {
+	Invoice invoice = createEmptyInvoice();
+	Invoice invoice2 = createEmptyInvoice();
+	Assert.assertEquals(1,invoice2.getNumber()- invoice.getNumber());
+	}
+		
 	private Invoice createEmptyInvoice() {
 		return new Invoice();
 	}
